@@ -150,18 +150,19 @@
       var counter = 0;
       var matrix = this.rows();
       var matrixLength = this.get('n');
+       
+
       var recurse = function(x, y) {
         if (x >= matrixLength || y >= matrixLength) {
           return;
         }
 
-
-        if (matrix[x][y] === 1) {
-          counter++; 
+        if (y >= 0 && matrix[x][y] === 1) {
+          counter++;
         }
         recurse(x + 1, y + 1); 
       };
-
+       
       recurse(0, majorDiagonalColumnIndexAtFirstRow);
         
       return (counter > 1) ? true : false;
@@ -173,7 +174,7 @@
       var matrixLength = this.get('n');
       var result = false;
 
-      for (var i = 0; i < matrixLength; ++i) {
+      for (var i = -1 * matrixLength; i < matrixLength; ++i) {
         result = result || this.hasMajorDiagonalConflictAt(i);
       }
 
@@ -190,20 +191,20 @@
       var counter = 0;
       var matrix = this.rows();
       var matrixLength = this.get('n');
+
       var recurse = function(x, y) {
-        if (x >= matrixLength || y >= matrixLength) {
+        if (x >= matrixLength || y < 0) {
           return;
         }
-
-
-        if (matrix[x][y] === 1) {
-          counter++; 
+    
+        if (y < matrixLength && matrix[x][y] === 1) {
+          counter++;
         }
         recurse(x + 1, y - 1); 
       };
-
+    
       recurse(0, minorDiagonalColumnIndexAtFirstRow);
-        
+             
       return (counter > 1) ? true : false;
     },
 
@@ -211,9 +212,9 @@
     hasAnyMinorDiagonalConflicts: function() {
       var matrixLength = this.get('n');
       var result = false;
-
-      for (var i = 0; i < matrixLength; ++i) {
-        result = result || this.hasMinorDiagonalConflictAt  (i);
+       
+      for (var i = matrixLength * 2; i >= 0; --i) {
+        result = result || this.hasMinorDiagonalConflictAt(i);
       }
 
       return result; // fixme
