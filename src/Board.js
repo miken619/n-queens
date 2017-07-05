@@ -7,6 +7,8 @@
   window.Board = Backbone.Model.extend({
 
     initialize: function (params) {
+      //params is the matrix [[array[4]],'','',''] .length = 4
+
       if (_.isUndefined(params) || _.isNull(params)) {
         console.log('Good guess! But to use the Board() constructor, you must pass it an argument in one of the following formats:');
         console.log('\t1. An object. To create an empty board of size n:\n\t\t{n: %c<num>%c} - Where %c<num> %cis the dimension of the (empty) board you wish to instantiate\n\t\t%cEXAMPLE: var board = new Board({n:5})', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: grey;');
@@ -47,7 +49,7 @@
         this.hasColConflictAt(colIndex) ||
         this.hasMajorDiagonalConflictAt(this._getFirstRowColumnIndexForMajorDiagonalOn(rowIndex, colIndex)) ||
         this.hasMinorDiagonalConflictAt(this._getFirstRowColumnIndexForMinorDiagonalOn(rowIndex, colIndex))
-      );
+      );                                                                                                                                                                                   
     },
 
     hasAnyQueensConflicts: function() {
@@ -79,12 +81,30 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
+      var counter = 0;
+      var array = this.get(rowIndex);
+
+      for (var i = 0; i < array.length; ++i) {
+        if (array[i] === 1) {
+          counter++;
+        }
+        if (counter > 1) {
+          return true;
+        }
+      }
       return false; // fixme
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      return false; // fixme
+      var length = this.get('n');
+      var result = false;
+
+      for (var i = 0; i < length; ++i) {
+        result = result || this.hasRowConflictAt(i);
+      }
+
+      return result;
     },
 
 
@@ -94,12 +114,30 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      return false; // fixme
+      var counter = 0;
+      var matrixLength = this.get('n');
+      
+      for (var i = 0; i < matrixLength; i++) {
+        if (this.get([i])[colIndex] === 1) {
+          counter++;  
+        }
+        if (counter > 1) {
+          return true;
+        }
+      }
+      return false;
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-      return false; // fixme
+      var matrixLength = this.get('n');
+      var result = false;
+
+      for (var i = 0; i < matrixLength; ++i) {
+        result = result || this.hasColConflictAt(i);
+      }
+
+      return result;
     },
 
 
@@ -109,12 +147,37 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      var counter = 0;
+      var matrix = this.rows();
+      var matrixLength = this.get('n');
+      var recurse = function(x, y) {
+        if (x >= matrixLength || y >= matrixLength) {
+          return;
+        }
+
+
+        if (matrix[x][y] === 1) {
+          counter++; 
+        }
+        recurse(x + 1, y + 1); 
+      };
+
+      recurse(0, majorDiagonalColumnIndexAtFirstRow);
+        
+      return (counter > 1) ? true : false;
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
+
+      var matrixLength = this.get('n');
+      var result = false;
+
+      for (var i = 0; i < matrixLength; ++i) {
+        result = result || this.hasMajorDiagonalConflictAt(i);
+      }
+
+      return result; // fixme
     },
 
 
@@ -124,12 +187,36 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      var counter = 0;
+      var matrix = this.rows();
+      var matrixLength = this.get('n');
+      var recurse = function(x, y) {
+        if (x >= matrixLength || y >= matrixLength) {
+          return;
+        }
+
+
+        if (matrix[x][y] === 1) {
+          counter++; 
+        }
+        recurse(x + 1, y - 1); 
+      };
+
+      recurse(0, minorDiagonalColumnIndexAtFirstRow);
+        
+      return (counter > 1) ? true : false;
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      return false; // fixme
+      var matrixLength = this.get('n');
+      var result = false;
+
+      for (var i = 0; i < matrixLength; ++i) {
+        result = result || this.hasMinorDiagonalConflictAt  (i);
+      }
+
+      return result; // fixme
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
