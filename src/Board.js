@@ -213,7 +213,7 @@
       var matrixLength = this.get('n');
       var result = false;
        
-      for (var i = matrixLength * 2; i >= 0; --i) {
+      for (var i = matrixLength + (matrixLength/2); i >= 0; --i) {
         result = result || this.hasMinorDiagonalConflictAt(i);
       }
 
